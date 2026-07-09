@@ -1,6 +1,5 @@
 require("dotenv").config();
 const nodemailer = require("nodemailer");
-
 const getTransporter = () => {
   const isSmtpConfigured =
     process.env.SMTP_USER &&
@@ -65,7 +64,7 @@ const sendVerificationEmail = async (email, username, token) => {
 
 
 const sendPasswordResetEmail = async (email, username, token) => {
-  const appUrl = process.env.APP_URL || "http://localhost:5000";
+  const appUrl = "http://localhost:5000";
   const resetUrl = `${appUrl}/api/auth/reset-password/${token}`;
   return sendEmail({
     to: email,

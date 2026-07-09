@@ -8,30 +8,29 @@ const generateToken = (id, role) => {
   );
 };
 
+// Frontend origin — update if your dev port changes
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+
 const googleCallbackHandler = (req, res) => {
   try {
     if (!req.user) {
-      return res.status(401).json({
-        success: false,
-        message: "Google authentication failed. No user profile was resolved.",
-      });
+      return res.redirect(`${FRONTEND_URL}/login?error=google_failed`);
     }
 
-     const token = generateToken(req.user._id, req.user.role);
+    const token = generateToken(req.user._id, req.user.role);
 
-     return res.status(200).json({
-  success: true,
-  token,
-  user: req.user,
-});
-  }
-     catch (error) {
+    // Encode user as base64 JSON so it travels safely in the query string
+    const userPayload = Buffer.from(JSON.stringify(req.user)).toString("base64");
+
+    // Redirect browser to the frontend callback page with credentials
+    return res.redirect(
+      `${FRONTEND_URL}/auth/google/callback?token=${token}&user=${userPayload}`
+    );
+  } catch (error) {
     console.error("Google Auth Callback Error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error during OAuth session generation.",
-    });
-     }}
+    return res.redirect(`${FRONTEND_URL}/login?error=server_error`);
+  }
+};
 
      
      const logoutUser = (req, res, next) => {

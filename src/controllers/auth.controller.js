@@ -29,7 +29,8 @@ const hash=await bcrypt.hash(password,10);
 const user=await usermodel.create({
     username,
     email,
-    password:hash
+    password:hash,
+    role: role || "freelancer"
 })
 
 const token=jwt.sign({
@@ -48,8 +49,10 @@ res.status(201).json({
       user: {
             id: user._id,
             username: user.username,
-            email: user.email
-        }
+            email: user.email,
+            role: user.role
+        },
+      token: token
 })
 }
 
@@ -82,6 +85,7 @@ async function loginuserController(req,res) {
     )
 
     res.cookie("token",token)
+
     
     res.status(200).json({
         message:"user loggedin successfully",

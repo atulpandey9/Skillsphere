@@ -3,7 +3,7 @@ const userRouter = express.Router();
 const { updateUserRole } = require("../controllers/auth.controller.js");
 const { requireAuth, requireRole, isVerified } = require("../middleware/auth.middleware.js");
 
-// All routes here require authentication (using requireAuth instead of protect)
+
 userRouter.use(requireAuth);
 
 /**
@@ -12,7 +12,7 @@ userRouter.use(requireAuth);
  */
 userRouter.get(
   "/admin/dashboard",
-  requireRole("admin"), // Changed authorize -> requireRole
+  requireRole("admin"), 
   (req, res) => {
     return res.status(200).json({
       success: true,
@@ -31,7 +31,7 @@ userRouter.get(
  * @route   PUT /api/users/:id/role
  * @access  Private (Admin Only)
  */
-userRouter.put("/:id/role", requireRole("admin"), updateUserRole); // Changed authorize -> requireRole
+userRouter.put("/:id/role", requireRole("admin"), updateUserRole); 
 
 /**
  * @route   GET /api/users/freelancer/gigs
@@ -39,7 +39,7 @@ userRouter.put("/:id/role", requireRole("admin"), updateUserRole); // Changed au
  */
 userRouter.get(
   "/freelancer/gigs",
-  requireRole("freelancer"), // Changed authorize -> requireRole
+  requireRole("freelancer"),
   isVerified, 
   (req, res) => {
     return res.status(200).json({
@@ -59,7 +59,7 @@ userRouter.get(
  */
 userRouter.get(
   "/client/projects",
-  requireRole("client"), // Changed authorize -> requireRole
+  requireRole("client"), 
   (req, res) => {
     return res.status(200).json({
       success: true,
@@ -78,7 +78,7 @@ userRouter.get(
  */
 userRouter.get(
   "/shared/workspace",
-  requireRole("freelancer", "client"), // Changed authorize -> requireRole
+  requireRole("freelancer", "client"), 
   (req, res) => {
     return res.status(200).json({
       success: true,

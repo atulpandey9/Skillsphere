@@ -1,0 +1,53 @@
+const mongoose=require('mongoose');
+
+const gigschema=new mongoose.Schema({
+     title:{
+        type:String,
+        required:true
+    },
+
+    description:{
+        type:String,
+        required:true
+    },
+
+    category:{
+        type:String,
+        required:true
+    },
+
+    skills:[
+        {
+            type:String
+        }
+    ],
+
+    budget:{
+        type:Number,
+        required:true
+    },
+
+    duration:{
+        type:String
+    },
+
+    experienceLevel:{
+        type:String,
+        enum:["Beginner","Intermediate","Expert"]
+    },
+
+    createdBy:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User"
+    },
+
+    status:{
+        type:String,
+        enum:["Open","Closed"],
+        default:"Open"
+    }
+},{timestamps:true});
+
+const gigmodel=mongoose.model("gig",gigschema);
+
+module.exports=gigmodel

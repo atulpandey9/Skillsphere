@@ -8,7 +8,6 @@ const generateToken = (id, role) => {
   );
 };
 
-// Frontend origin — update if your dev port changes
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 
 const googleCallbackHandler = (req, res) => {

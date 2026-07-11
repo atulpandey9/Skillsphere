@@ -1,6 +1,6 @@
 const gigmodel=require('../models/gig.model');
 const jwt=require('jsonwebtoken');
-
+const uploadToCloudinary = require("../utils/uploadtocloudinary");
 
 async function creategig(req,res) {
    try{
@@ -9,8 +9,24 @@ async function creategig(req,res) {
     if(!title||!description||!category||!skills||!budget||!duration||!experienceLevel){
         return res.status(400).json({message:"plese fill up full details"})
     }
+    const documents = [];
+
+if (req.files && req.files.length > 0) {
+    for (const file of req.files) {
+        const uploaded = await uploadToCloudinary(
+            file.buffer,
+            "skillsphere/gigs"
+        );
+
+        documents.push({
+            fileName: file.originalname,
+            fileUrl: uploaded.secure_url,
+            publicId: uploaded.public_id,
+        });
+    }
+}
 const gig=await gigmodel.create({
-    title,description,category,skills,budget,duration,experienceLevel,createdBy: req.user.id
+    title,description,category,skills,budget,duration,experienceLevel,documents,createdBy: req.user.id
 })
 return res.status(201).json({
       success: true,
@@ -29,7 +45,6 @@ console.error("Create Gig Error:", err);
  
 
 }
-
 
 async function getallgig(req,res){
    
@@ -72,6 +87,82 @@ const getAllGigs = async (req, res) => {
 
 }
 
+const updateGig = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find the gig
+    const gig = await gigmodel.findById(id);
+
+    if (!gig) {
+      return res.status(404).json({
+        success: false,
+        message: "Gig not found",
+      });
+    }
+
+    // Check ownership
+    if (gig.createdBy.toString() !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to update this gig",
+      });
+    }
+
+    // Update the gig
+    const updatedGig = await gigmodel.findByIdAndUpdate(
+      id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Gig updated successfully",
+      data: updatedGig,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
 
 
-module.exports={creategig,getallgig}
+
+
+const deleteGig = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedGig = await gigmodel.findOneAndDelete({
+      _id: id,
+      createdBy: req.user.id,
+    });
+
+    if (!deletedGig) {
+      return res.status(404).json({
+        success: false,
+        message: "Gig not found or you are not authorized",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Gig deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+
+module.exports={creategig,getallgig,updateGig,deleteGig}

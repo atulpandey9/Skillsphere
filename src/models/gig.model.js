@@ -26,6 +26,14 @@ const gigschema=new mongoose.Schema({
         type:Number,
         required:true
     },
+     documents: [
+        {
+            fileName: String,
+            fileUrl: String,
+            publicId: String,
+        }
+    ],
+
 
     duration:{
         type:String

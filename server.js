@@ -5,7 +5,7 @@ const connectdb=require('./src/config/db.js')
 dotenv.config()
 
 connectdb()
-
+require("dotenv").config();
 app.get('/',(req,res)=>{
     res.send('server is running')
 })

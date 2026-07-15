@@ -5,7 +5,7 @@ const { requireAuth, requireRole, isVerified } = require("../middleware/auth.mid
 const upload = require('../middleware/upload.middleware.js');
 
 router.post("/creategig",requireAuth,upload.array("documents",5),creategig);
-router.post('/getallgig',getallgig);
-router.post("/updategig",updateGig)
-router.post("/deletegig",deleteGig)
+router.get('/getallgig',getallgig);
+router.put("/updategig",updateGig)
+router.delete("/deletegig",deleteGig)
 module.exports=router

@@ -1,6 +1,9 @@
 const gigmodel=require('../models/gig.model');
 const jwt=require('jsonwebtoken');
 const uploadToCloudinary = require("../utils/uploadtocloudinary");
+const mongoose=require('mongoose')
+const usermodel=require('../models/user.model')
+
 
 async function creategig(req,res) {
    try{
@@ -17,7 +20,7 @@ if (req.files && req.files.length > 0) {
             file.buffer,
             "skillsphere/gigs"
         );
-
+    
         documents.push({
             fileName: file.originalname,
             fileUrl: uploaded.secure_url,
@@ -26,7 +29,7 @@ if (req.files && req.files.length > 0) {
     }
 }
 const gig=await gigmodel.create({
-    title,description,category,skills,budget,duration,experienceLevel,documents,createdBy: req.user.id
+    title,description,category,skills,budget,duration,experienceLevel,documents,createdBy: req.user._id
 })
 return res.status(201).json({
       success: true,

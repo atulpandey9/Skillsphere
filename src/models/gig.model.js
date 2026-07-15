@@ -33,20 +33,20 @@ const gigschema=new mongoose.Schema({
             publicId: String,
         }
     ],
-
-
     duration:{
         type:String
     },
 
     experienceLevel:{
-        type:String,
+        type:String,  
+        required: true,
         enum:["Beginner","Intermediate","Expert"]
     },
 
     createdBy:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"User"
+        ref:"User",
+        required:true
     },
 
     status:{
